@@ -1,0 +1,55 @@
+package com.szakikereso.backend.controller;
+
+import com.szakikereso.backend.model.Professional;
+import com.szakikereso.backend.service.ProfessionalService;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
+import java.util.List;
+
+
+@RestController
+@RequestMapping("/api/professionals")
+@RequiredArgsConstructor
+public class ProfessionalController {
+    private final ProfessionalService service;
+
+
+    @GetMapping
+    public List<Professional> getAll() {
+        return service.findAll();
+    }
+
+    @GetMapping("/search")
+    public List<Professional> search(
+            @RequestParam(required = false) String name,
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String specialty,
+            @RequestParam(required = false)
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime slot,
+            @RequestParam(defaultValue = "false") boolean urgent
+    ) {
+        return service.search(name, city, specialty, slot, urgent);
+    }
+
+    @PostMapping
+    public Professional create(@RequestBody Professional p) {
+        return service.save(p);
+    }
+
+    @PostMapping("/{id}/book")
+    public Professional book(
+            @PathVariable Long id,
+            @RequestParam
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
+            LocalDateTime slot
+    ) {
+        return service.bookSlot(id, slot);
+    }
+
+
+}
