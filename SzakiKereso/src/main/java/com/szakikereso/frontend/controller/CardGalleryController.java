@@ -3,6 +3,7 @@ package com.szakikereso.frontend.controller;
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.service.ProfessionalService;
 import javafx.fxml.FXML;
+import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
@@ -13,12 +14,13 @@ import javafx.scene.text.Text;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.function.Function;
 
 @Component
 public class CardGalleryController {
     @FXML private TextField nameField;
     @FXML private TextField cityField;
-    @FXML private ComboBox<String> specialtyBox;
+    @FXML private TextField specialtyField;
     @FXML private DatePicker datePicker;
     @FXML private CheckBox urgentBox;
     @FXML private GridPane cardGrid;
@@ -31,17 +33,23 @@ public class CardGalleryController {
     private int currentPage = 0;
     private int pageSize = 8;
 
-   /* @Autowired
-    public CardGalleryController(ProfessionalService service) {
-        this.service = service;
-    }*/
 
     public CardGalleryController() {
     }
 
     @FXML
     public void initialize() {
-        specialtyBox.getItems().addAll("Villanyszerelő","Vízszerelő","Asztalos","Lakatos","..");
+        setupAutoComplete(nameField, service::suggestNames);
+        setupAutoComplete(cityField, service::suggestCity);
+        setupAutoComplete(specialtyField, service::suggestSpecialties);
+
+        //Frissít amikor gépel
+        nameField.textProperty().addListener((obs, oldVal, newVal) -> performSearch());
+        cityField.textProperty().addListener((obs, oldVal, newVal) -> performSearch());
+        specialtyField.textProperty().addListener((obs, oldVal, newVal) -> performSearch());
+        datePicker.valueProperty().addListener((obs, oldVal, newVal) -> performSearch());
+        urgentBox.selectedProperty().addListener((obs, oldVal, newVal) -> performSearch());
+
         performSearch();
     }
 
@@ -51,9 +59,9 @@ public class CardGalleryController {
     }
 
     private void performSearch() {
-        String name=nameField.getText();
-        String city=cityField.getText();
-        String specialty=specialtyBox.getValue();
+        String name=emptyToNull(nameField.getText());
+        String city=emptyToNull(cityField.getText());
+        String specialty= emptyToNull(specialtyField.getText());
         LocalDate date=datePicker.getValue();
         boolean urgent=urgentBox.isSelected();
 
@@ -115,4 +123,42 @@ public class CardGalleryController {
     private void openBookingDialog(Professional p) {
         // Új ablak vagy dialog a foglaláshoz
     }
+
+    private void setupAutoComplete(TextField field, Function<String, List<String>> suggester) {
+        ContextMenu suggestionsPopup = new ContextMenu();
+
+        field.textProperty().addListener((obs, oldText, newText) -> {
+            if (newText == null || newText.isEmpty()) {
+                suggestionsPopup.hide();
+                return;
+            }
+
+            List<String> suggestions = suggester.apply(newText);
+            if (suggestions.isEmpty()) {
+                suggestionsPopup.hide();
+                return;
+            }
+
+            List<MenuItem> menuItems = new ArrayList<>();
+            for (String suggestion : suggestions) {
+                MenuItem item = new MenuItem(suggestion);
+                item.setOnAction(e -> {
+                    field.setText(suggestion);
+                    suggestionsPopup.hide();
+                });
+                menuItems.add(item);
+            }
+
+            suggestionsPopup.getItems().setAll(menuItems);
+            if (!suggestionsPopup.isShowing()) {
+                suggestionsPopup.show(field, Side.BOTTOM, 0, 0);
+            }
+        });
+    }
+
+    private String emptyToNull(String text) {
+        return (text == null || text.isBlank()) ? null : text.trim();
+    }
+
+
 }

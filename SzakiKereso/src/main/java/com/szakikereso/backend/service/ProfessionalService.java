@@ -13,6 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProfessionalService {
     private final ProfessionalRepository repo;
+    private final ProfessionalRepository professionalRepository;
 
     public List<Professional> findAll() {
         return repo.findAll();
@@ -24,17 +25,8 @@ public class ProfessionalService {
             String specialty,
             LocalDateTime slot,
             boolean urgent
-    ) {
-        if (name != null && !name.isBlank()) {
-            return repo.findByNameContainingIgnoreCase(name);
-        }
-        if (city != null && specialty != null) {
-            return repo.findByCityIgnoreCaseAndSpecialtyContainingIgnoreCase(city, specialty);
-        }
-        if (slot != null) {
-            return repo.findByAvailableSlotsContains(slot);
-        }
-        return repo.findAll();
+    )  {
+        return repo.advancedSearch(name, city, specialty, slot, urgent);
     }
 
     public Professional save(Professional p) {
@@ -48,5 +40,17 @@ public class ProfessionalService {
             throw new IllegalStateException("Az időpont már foglalt");
         }
         return repo.save(p);
+    }
+
+    public List<String> suggestSpecialties(String prefix){
+        return professionalRepository.findDistinctSpecialtiesStartingWith(prefix.toLowerCase());
+    }
+
+    public List<String> suggestNames(String prefix) {
+        return professionalRepository.findDistinctNameStartingWith(prefix.toLowerCase());
+    }
+
+    public List<String> suggestCity(String prefix) {
+        return professionalRepository.findDistinctCityStartingWith(prefix.toLowerCase());
     }
 }

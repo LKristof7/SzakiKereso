@@ -7,7 +7,7 @@
             fx:controller="com.szakikereso.frontend.controller.CardGalleryController"
             stylesheets="@../styles/main.css">
 
-    <!-- Top: Search Filters -->
+
     <HBox spacing="10"
           AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <padding>
@@ -15,13 +15,13 @@
         </padding>
         <TextField fx:id="nameField" promptText="Név szerint..." HBox.hgrow="ALWAYS"/>
         <TextField fx:id="cityField" promptText="Város..."/>
-        <ComboBox fx:id="specialtyBox" promptText="Szakterület..."/>
+        <TextField fx:id="specialtyField" promptText="Szakterület..."/>
         <DatePicker fx:id="datePicker"/>
         <CheckBox fx:id="urgentBox" text="Sürgős"/>
         <Button text="Keresés" onAction="#onSearch"/>
     </HBox>
 
-    <!-- Center: Card Grid -->
+
     <ScrollPane AnchorPane.topAnchor="50" fitToWidth="true"
                 AnchorPane.bottomAnchor="50" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <content>
@@ -33,7 +33,7 @@
         </content>
     </ScrollPane>
 
-    <!-- Bottom: Pagination -->
+
     <HBox spacing="10" alignment="CENTER"
           AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <padding>
