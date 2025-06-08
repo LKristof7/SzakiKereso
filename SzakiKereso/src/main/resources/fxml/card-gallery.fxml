@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+
+<AnchorPane xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.szakikereso.frontend.controller.CardGalleryController"
+            stylesheets="@../styles/main.css">
+
+    <!-- Top: Search Filters -->
+    <HBox spacing="10"
+          AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+        <TextField fx:id="nameField" promptText="Név szerint..." HBox.hgrow="ALWAYS"/>
+        <TextField fx:id="cityField" promptText="Város..."/>
+        <ComboBox fx:id="specialtyBox" promptText="Szakterület..."/>
+        <DatePicker fx:id="datePicker"/>
+        <CheckBox fx:id="urgentBox" text="Sürgős"/>
+        <Button text="Keresés" onAction="#onSearch"/>
+    </HBox>
+
+    <!-- Center: Card Grid -->
+    <ScrollPane AnchorPane.topAnchor="50" fitToWidth="true"
+                AnchorPane.bottomAnchor="50" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <content>
+            <GridPane fx:id="cardGrid" hgap="15" vgap="15">
+                <padding>
+                    <Insets top="15" right="15" bottom="15" left="15"/>
+                </padding>
+            </GridPane>
+        </content>
+    </ScrollPane>
+
+    <!-- Bottom: Pagination -->
+    <HBox spacing="10" alignment="CENTER"
+          AnchorPane.bottomAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <padding>
+            <Insets top="10" right="10" bottom="10" left="10"/>
+        </padding>
+        <Button text="&#171; Prev" onAction="#onPrevPage"/>
+        <Label fx:id="pageLabel" text="1 / 10"/>
+        <Button text="Next &#187;" onAction="#onNextPage"/>
+    </HBox>
+
+</AnchorPane>

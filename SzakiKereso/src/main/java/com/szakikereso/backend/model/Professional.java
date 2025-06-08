@@ -17,7 +17,7 @@ public class Professional {
     private long id;
 
     private String name;
-    private String speciality;
+    private String specialty;
     private String phone;
     private String email;
     private String city;

@@ -1,31 +1,38 @@
 package com.szakikereso.frontend;
 
-import com.szakikereso.SzakiKeresoApplication;
+import com.szakikereso.SpringContext;
+import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import com.szakikereso.SzakiKeresoApplication;
 
-public class JavaFXApplication extends SzakiKeresoApplication {
+public class JavaFXApplication extends Application {
+
     private ConfigurableApplicationContext springContext;
 
     @Override
-    public void init() {
+    public void init() throws Exception {
+        super.init();
         springContext = SpringApplication.run(SzakiKeresoApplication.class);
+        SpringContext.setContext(springContext);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
-        Parent root = FXMLLoader.load(getClass().getResource("/fxml/main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        Parent root = loader.load();
         stage.setScene(new Scene(root));
         stage.setTitle("Szakember-kereső");
         stage.show();
     }
 
     @Override
-    public void stop() {
+    public void stop() throws Exception {
+        super.stop();
         springContext.close();
     }
 

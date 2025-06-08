@@ -8,7 +8,22 @@
 
 <AnchorPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
-            fx:controller="com.szakikereso.frontend.JavaFXApplication"
-            prefHeight="400.0" prefWidth="600.0" >
+            fx:controller="com.szakikereso.frontend.controller.MainPageController"
+            prefHeight="800.0" prefWidth="600.0" >
+
+
+    <MenuBar fx:id="menuBar" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
+        <Menu text="Nézet">
+            <MenuItem text="Szakemberek" onAction="#showGallery"/>
+        </Menu>
+    </MenuBar>
+
+
+    <Pane fx:id="mainContent"
+          AnchorPane.topAnchor="25"
+    AnchorPane.bottomAnchor="0"
+    AnchorPane.leftAnchor="0"
+    AnchorPane.rightAnchor="0">
+    </Pane>
 
 </AnchorPane>
