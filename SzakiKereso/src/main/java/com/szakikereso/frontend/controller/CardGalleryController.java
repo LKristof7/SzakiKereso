@@ -32,6 +32,8 @@ public class CardGalleryController {
     private List<Professional> results;
     private int currentPage = 0;
     private int pageSize = 8;
+    @Autowired
+    private ProfessionalService professionalService;
 
 
     public CardGalleryController() {
@@ -104,7 +106,10 @@ public class CardGalleryController {
 
         Button book = new Button("Foglalás");
         book.getStyleClass().add("book-button");
-        book.setOnAction(e -> openBookingDialog(p));
+        book.setOnAction(e -> {
+            Professional fullyLoaded = professionalService.getProfessionalWithSlots(p.getId());
+            openBookingDialog(fullyLoaded);
+        });
 
         vbox.getChildren().addAll(nameText, specText, cityText, priceText, book);
         return vbox;
@@ -121,7 +126,49 @@ public class CardGalleryController {
     }
 
     private void openBookingDialog(Professional p) {
-        // Új ablak vagy dialog a foglaláshoz
+        Dialog<Void> dialog=new Dialog<>();
+        dialog.setTitle("Időpont foglalás:"+p.getName());
+
+        ComboBox<LocalDateTime> slotBox=new ComboBox<>();
+        slotBox.getItems().addAll(p.getAvailableSlots());
+        slotBox.setPromptText("Válassz időpontot");
+
+        TextField nameField=new TextField();
+        nameField.setPromptText("Név");
+
+        TextField emailField=new TextField();
+        emailField.setPromptText("E-mail");
+
+        TextField phoneField =new TextField();
+        phoneField.setPromptText("Telefonszám");
+
+        ButtonType bookButtonType = new ButtonType("Foglalás", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(bookButtonType, ButtonType.CANCEL);
+
+        VBox content = new VBox(10, slotBox, nameField, emailField);
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(dialogButton -> {
+            if (dialogButton == bookButtonType) {
+                LocalDateTime selected = slotBox.getValue();
+                String name = nameField.getText();
+                String email = emailField.getText();
+                if (selected != null && !name.isBlank() && !email.isBlank()) {
+                    try {
+                        service.bookSlot(p.getId(), selected); // backend hívás
+
+                        Alert success = new Alert(Alert.AlertType.INFORMATION, "Sikeres foglalás!");
+                        success.showAndWait();
+                    } catch (Exception e) {
+                        Alert error = new Alert(Alert.AlertType.ERROR, "Hiba: " + e.getMessage());
+                        error.showAndWait();
+                    }
+                }
+            }
+            return null;
+        });
+
+        dialog.showAndWait();
     }
 
     private void setupAutoComplete(TextField field, Function<String, List<String>> suggester) {

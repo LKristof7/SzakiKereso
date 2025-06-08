@@ -5,6 +5,7 @@ import com.szakikereso.backend.repository.ProfessionalRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -52,5 +53,13 @@ public class ProfessionalService {
 
     public List<String> suggestCity(String prefix) {
         return professionalRepository.findDistinctCityStartingWith(prefix.toLowerCase());
+    }
+
+    @Transactional
+    public Professional getProfessionalWithSlots(Long id){
+        Professional p = professionalRepository.findById(id).orElseThrow(() -> new RuntimeException("Nincs ilyen szakember:"+id));
+
+        p.getAvailableSlots().size();
+        return p;
     }
 }

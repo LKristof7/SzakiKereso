@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<VBox xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="com.szakikereso.frontend.controller.BookingDialogController"
+            prefHeight="400.0" prefWidth="600.0">
+    <Label text="Időpont foglalás"/>
+    <TextField fx:id="nameField" promptText="Név"/>
+    <TextField fx:id="emailField" promptText="E-mail cím"/>
+    <TextField fx:id="phoneField" promptText="Telefonszám"/>
+    <DatePicker fx:id="datePicker" />
+    <ComboBox fx:id="timeBox" promptText="Időpont"/>
+    <Button text="Foglalás" onAction="#onBook"/>
+
+</VBox>
