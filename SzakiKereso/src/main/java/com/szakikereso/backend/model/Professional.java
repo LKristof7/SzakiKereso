@@ -3,7 +3,10 @@ package com.szakikereso.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.sql.Time;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Entity
@@ -25,8 +28,8 @@ public class Professional {
     private boolean urgentAvailable;
 
     // Elérhető időpontok
-    @ElementCollection
-    private Set<LocalDateTime> availableSlots;
+    @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<TimeSlot> timeSlots=new ArrayList<>();
 
     // Vélemények
     @OneToMany(mappedBy = "professional", cascade = CascadeType.ALL, orphanRemoval = true)

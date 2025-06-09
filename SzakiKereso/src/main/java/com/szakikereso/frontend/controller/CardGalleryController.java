@@ -108,6 +108,7 @@ public class CardGalleryController {
         book.getStyleClass().add("book-button");
         book.setOnAction(e -> {
             Professional fullyLoaded = professionalService.getProfessionalWithSlots(p.getId());
+            System.out.println("Available slots: "+ fullyLoaded.getAvailableSlots());
             openBookingDialog(fullyLoaded);
         });
 
