@@ -13,11 +13,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class ProfessionalService {
-    private final ProfessionalRepository repo;
     private final ProfessionalRepository professionalRepository;
 
     public List<Professional> findAll() {
-        return repo.findAll();
+        return professionalRepository.findAll();
     }
 
     public List<Professional> search(
@@ -27,20 +26,11 @@ public class ProfessionalService {
             LocalDateTime slot,
             boolean urgent
     )  {
-        return repo.advancedSearch(name, city, specialty, slot, urgent);
+        return professionalRepository.advancedSearch(name, city, specialty, slot, urgent);
     }
 
     public Professional save(Professional p) {
-        return repo.save(p);
-    }
-
-    public Professional bookSlot(Long profId, LocalDateTime slot) {
-        var p = repo.findById(profId)
-                .orElseThrow(() -> new IllegalArgumentException("Nincs ilyen szakember"));
-        if (!p.getAvailableSlots().remove(slot)) {
-            throw new IllegalStateException("Az időpont már foglalt");
-        }
-        return repo.save(p);
+        return professionalRepository.save(p);
     }
 
     public List<String> suggestSpecialties(String prefix){
@@ -59,7 +49,7 @@ public class ProfessionalService {
     public Professional getProfessionalWithSlots(Long id){
         Professional p = professionalRepository.findById(id).orElseThrow(() -> new RuntimeException("Nincs ilyen szakember:"+id));
 
-        p.getAvailableSlots().size();
+        p.getTimeSlots().size();
         return p;
     }
 }

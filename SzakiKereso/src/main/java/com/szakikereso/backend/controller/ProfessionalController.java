@@ -15,12 +15,12 @@ import java.util.List;
 @RequestMapping("/api/professionals")
 @RequiredArgsConstructor
 public class ProfessionalController {
-    private final ProfessionalService service;
+    private final ProfessionalService professionalService;
 
 
     @GetMapping
     public List<Professional> getAll() {
-        return service.findAll();
+        return professionalService.findAll();
     }
 
     @GetMapping("/search")
@@ -33,22 +33,12 @@ public class ProfessionalController {
             LocalDateTime slot,
             @RequestParam(defaultValue = "false") boolean urgent
     ) {
-        return service.search(name, city, specialty, slot, urgent);
+        return professionalService.search(name, city, specialty, slot, urgent);
     }
 
     @PostMapping
     public Professional create(@RequestBody Professional p) {
-        return service.save(p);
-    }
-
-    @PostMapping("/{id}/book")
-    public Professional book(
-            @PathVariable Long id,
-            @RequestParam
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime slot
-    ) {
-        return service.bookSlot(id, slot);
+        return professionalService.save(p);
     }
 
 

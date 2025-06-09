@@ -1,16 +1,20 @@
 package com.szakikereso.frontend.controller;
 
 import com.szakikereso.backend.model.Professional;
+import com.szakikereso.backend.model.TimeSlot;
+import com.szakikereso.backend.service.BookingService;
 import com.szakikereso.backend.service.ProfessionalService;
 import javafx.fxml.FXML;
 import javafx.geometry.Side;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javafx.scene.text.Text;
 
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -27,13 +31,15 @@ public class CardGalleryController {
     @FXML private Label pageLabel;
 
     @Autowired
-    private  ProfessionalService service;
+    private ProfessionalService professionalService;
+
+    @Autowired
+    private BookingService bookingService;
 
     private List<Professional> results;
     private int currentPage = 0;
     private int pageSize = 8;
-    @Autowired
-    private ProfessionalService professionalService;
+
 
 
     public CardGalleryController() {
@@ -41,9 +47,9 @@ public class CardGalleryController {
 
     @FXML
     public void initialize() {
-        setupAutoComplete(nameField, service::suggestNames);
-        setupAutoComplete(cityField, service::suggestCity);
-        setupAutoComplete(specialtyField, service::suggestSpecialties);
+        setupAutoComplete(nameField, professionalService::suggestNames);
+        setupAutoComplete(cityField, professionalService::suggestCity);
+        setupAutoComplete(specialtyField, professionalService::suggestSpecialties);
 
         //Frissít amikor gépel
         nameField.textProperty().addListener((obs, oldVal, newVal) -> performSearch());
@@ -69,7 +75,7 @@ public class CardGalleryController {
 
         LocalDateTime slot=(date!=null)? date.atStartOfDay(): null;
 
-        results=service.search(name,city,specialty,slot,urgent);
+        results=professionalService.search(name,city,specialty,slot,urgent);
         currentPage=0;
         updateGrid();
 
@@ -108,7 +114,7 @@ public class CardGalleryController {
         book.getStyleClass().add("book-button");
         book.setOnAction(e -> {
             Professional fullyLoaded = professionalService.getProfessionalWithSlots(p.getId());
-            System.out.println("Available slots: "+ fullyLoaded.getAvailableSlots());
+            System.out.println("Available slots: "+ fullyLoaded.getTimeSlots());
             openBookingDialog(fullyLoaded);
         });
 
@@ -130,9 +136,22 @@ public class CardGalleryController {
         Dialog<Void> dialog=new Dialog<>();
         dialog.setTitle("Időpont foglalás:"+p.getName());
 
-        ComboBox<LocalDateTime> slotBox=new ComboBox<>();
-        slotBox.getItems().addAll(p.getAvailableSlots());
+        ComboBox<TimeSlot> slotBox=new ComboBox<>();
+        slotBox.getItems().addAll(p.getTimeSlots());
         slotBox.setPromptText("Válassz időpontot");
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+        slotBox.setConverter(new StringConverter<TimeSlot>() {
+            @Override
+            public String toString(TimeSlot slot) {
+                return slot == null ? "" : slot.getStartTime().format(formatter);
+            }
+
+            @Override
+            public TimeSlot fromString(String string) {
+                return null;
+            }
+        });
 
         TextField nameField=new TextField();
         nameField.setPromptText("Név");
@@ -146,17 +165,18 @@ public class CardGalleryController {
         ButtonType bookButtonType = new ButtonType("Foglalás", ButtonBar.ButtonData.OK_DONE);
         dialog.getDialogPane().getButtonTypes().addAll(bookButtonType, ButtonType.CANCEL);
 
-        VBox content = new VBox(10, slotBox, nameField, emailField);
+        VBox content = new VBox(10, slotBox, nameField, emailField, phoneField);
         dialog.getDialogPane().setContent(content);
 
         dialog.setResultConverter(dialogButton -> {
             if (dialogButton == bookButtonType) {
-                LocalDateTime selected = slotBox.getValue();
+                TimeSlot selected = slotBox.getValue();
                 String name = nameField.getText();
                 String email = emailField.getText();
+                String phone = phoneField.getText();
                 if (selected != null && !name.isBlank() && !email.isBlank()) {
                     try {
-                        service.bookSlot(p.getId(), selected); // backend hívás
+                        bookingService.createBooking(selected.getId(), name, email, phone);
 
                         Alert success = new Alert(Alert.AlertType.INFORMATION, "Sikeres foglalás!");
                         success.showAndWait();

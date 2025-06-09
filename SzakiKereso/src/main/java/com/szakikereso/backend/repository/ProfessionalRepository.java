@@ -21,8 +21,6 @@ public interface ProfessionalRepository extends JpaRepository<Professional, Long
     // Akár több feltétel kombinálva is lehet
     List<Professional> findByCityIgnoreCaseAndSpecialtyContainingIgnoreCase(String city, String specialty);
 
-    // Szabad időpont szerinti keresés (ha a slot benne van a készletben)
-    List<Professional> findByAvailableSlotsContains(LocalDateTime slot);
 
     @Query("SELECT DISTINCT p.specialty FROM Professional p WHERE LOWER(p.specialty) LIKE CONCAT(:prefix, '%')")
     List<String> findDistinctSpecialtiesStartingWith(@Param("prefix")String prefix);
@@ -34,14 +32,12 @@ public interface ProfessionalRepository extends JpaRepository<Professional, Long
     List<String> findDistinctCityStartingWith(@Param("prefix") String prefix);
 
 
-    @Query("""
-    SELECT p FROM Professional p
-    WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%')))
-      AND (:city IS NULL OR LOWER(p.city) LIKE LOWER(CONCAT('%', :city, '%')))
-      AND (:specialty IS NULL OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%')))
-      AND (:slot IS NULL OR :slot MEMBER OF p.availableSlots)
-      AND (:urgent = false OR p.urgentAvailable = true)
-    """)
+    @Query("SELECT p FROM Professional p WHERE " +
+            "(:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) AND " +
+            "(:city IS NULL OR LOWER(p.city) LIKE LOWER(CONCAT('%', :city, '%'))) AND " +
+            "(:specialty IS NULL OR LOWER(p.specialty) LIKE LOWER(CONCAT('%', :specialty, '%'))) AND " +
+            "(:slot IS NULL OR EXISTS (SELECT ts FROM TimeSlot ts WHERE ts.professional = p AND ts.startTime = :slot AND ts.isBooked = false)) AND " +
+            "(:urgent = false OR p.urgentAvailable = true)")
     List<Professional> advancedSearch(
             @Param("name") String name,
             @Param("city") String city,
