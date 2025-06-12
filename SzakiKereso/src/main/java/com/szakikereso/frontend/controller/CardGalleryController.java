@@ -1,12 +1,16 @@
 package com.szakikereso.frontend.controller;
 
+import com.szakikereso.SpringContext;
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
 import com.szakikereso.backend.service.ProfessionalService;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
+import javafx.scene.Parent;
 import javafx.scene.control.*;
+import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
@@ -14,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import javafx.scene.text.Text;
 
+import java.io.IOException;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.time.LocalDate;
@@ -29,12 +34,15 @@ public class CardGalleryController {
     @FXML private CheckBox urgentBox;
     @FXML private GridPane cardGrid;
     @FXML private Label pageLabel;
+    @FXML private AnchorPane detailViewPane;
 
     @Autowired
     private ProfessionalService professionalService;
 
     @Autowired
     private BookingService bookingService;
+
+    private ProfessionalDetailController detailController;
 
     private List<Professional> results;
     private int currentPage = 0;
@@ -57,6 +65,19 @@ public class CardGalleryController {
         specialtyField.textProperty().addListener((obs, oldVal, newVal) -> performSearch());
         datePicker.valueProperty().addListener((obs, oldVal, newVal) -> performSearch());
         urgentBox.selectedProperty().addListener((obs, oldVal, newVal) -> performSearch());
+
+        try {
+
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/professional_details.fxml"));
+            loader.setControllerFactory(clazz -> SpringContext.getContext().getBean(clazz));
+
+            Parent detailsNode = loader.load();
+            this.detailController = loader.getController();
+
+            detailViewPane.getChildren().setAll(detailsNode);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         performSearch();
     }
@@ -105,6 +126,14 @@ public class CardGalleryController {
     private VBox createCard(Professional p){
         VBox vbox=new VBox(5);
         vbox.getStyleClass().add("card");
+
+        vbox.setOnMouseClicked(mouseEvent -> {
+            if(detailController!=null){
+                Professional fullylLoaded= professionalService.getProfessionalWithDetails(p.getId());
+                detailController.displayProfessional(fullylLoaded);
+            }
+        });
+
         Text nameText = new Text(p.getName());
         Text specText = new Text(p.getSpecialty());
         Text cityText = new Text(p.getCity());
@@ -113,9 +142,8 @@ public class CardGalleryController {
         Button book = new Button("Foglalás");
         book.getStyleClass().add("book-button");
         book.setOnAction(e -> {
-            Professional fullyLoaded = professionalService.getProfessionalWithSlots(p.getId());
-            System.out.println("Available slots: "+ fullyLoaded.getTimeSlots());
-            openBookingDialog(fullyLoaded);
+            List<TimeSlot> availableSlots=professionalService.getAvailableTimeSlots(p.getId());
+            openBookingDialog(p, availableSlots);
         });
 
         vbox.getChildren().addAll(nameText, specText, cityText, priceText, book);
@@ -132,12 +160,12 @@ public class CardGalleryController {
         if ((currentPage+1)*pageSize < results.size()) { currentPage++; updateGrid(); }
     }
 
-    private void openBookingDialog(Professional p) {
+    private void openBookingDialog(Professional p, List<TimeSlot> availableSlots) {
         Dialog<Void> dialog=new Dialog<>();
         dialog.setTitle("Időpont foglalás:"+p.getName());
 
         ComboBox<TimeSlot> slotBox=new ComboBox<>();
-        slotBox.getItems().addAll(p.getTimeSlots());
+        slotBox.getItems().addAll(availableSlots);
         slotBox.setPromptText("Válassz időpontot");
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
