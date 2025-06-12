@@ -2,6 +2,10 @@ package com.szakikereso.frontend.controller;
 
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.Review;
+import com.szakikereso.backend.model.TimeSlot;
+import com.szakikereso.backend.service.BookingService;
+import com.szakikereso.backend.service.ProfessionalService;
+import com.szakikereso.frontend.util.DialogFactory;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -10,8 +14,11 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 public class ProfessionalDetailController {
+
 
     @FXML private VBox detailsRootPane;
     @FXML private Label nameLabel;
@@ -22,7 +29,15 @@ public class ProfessionalDetailController {
     @FXML private Button bookingButton;
     @FXML private VBox reviewsContainer;
 
+    private final ProfessionalService professionalService;
+    private final BookingService bookingService;
+
     private Professional currentProfessional;
+
+    public ProfessionalDetailController(ProfessionalService professionalService, BookingService bookingService) {
+        this.professionalService = professionalService;
+        this.bookingService = bookingService;
+    }
 
     public void displayProfessional(Professional professional) {
         this.currentProfessional = professional;
@@ -42,13 +57,17 @@ public class ProfessionalDetailController {
         else {
             for (Review review : professional.getReviews()) {
                 VBox reviewCard= new VBox(5);
-                reviewCard.setStyle("-fx-border-color: #cccccc; -fx-padding: 10; -fx-background-color: white;");
+                reviewCard.getStyleClass().add("reviewCard");
 
-                Text ratingText= new Text("Értékelés: "+review.getRating()+" /5");
+                int rating = review.getRating();
+                String stars = "★".repeat(rating) + "☆".repeat(5 - rating);
+                Label ratingLabel = new Label(stars);
+                ratingLabel.getStyleClass().add("rating-stars");
+
                 Text commentText= new Text(review.getComment());
                 commentText.setWrappingWidth(300);
 
-                reviewCard.getChildren().addAll(ratingText,commentText);
+                reviewCard.getChildren().addAll(ratingLabel,commentText);
                 reviewsContainer.getChildren().add(reviewCard);
             }
         }
@@ -56,10 +75,13 @@ public class ProfessionalDetailController {
 
     @FXML
     public void onBook() {
-        if(currentProfessional != null) {
-            System.out.println("Foglalás indítása");
-            //Itt
+        if(currentProfessional == null) {
+            return;
         }
+        List<TimeSlot> availableSlots=professionalService.getAvailableTimeSlots(currentProfessional.getId());
+
+        DialogFactory.showBookingDialog(currentProfessional,availableSlots,bookingService);
+        displayProfessional(currentProfessional);
     }
 
     @FXML

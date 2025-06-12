@@ -5,6 +5,7 @@ import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
 import com.szakikereso.backend.service.ProfessionalService;
+import com.szakikereso.frontend.util.DialogFactory;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Side;
@@ -46,7 +47,7 @@ public class CardGalleryController {
 
     private List<Professional> results;
     private int currentPage = 0;
-    private int pageSize = 8;
+    private int pageSize = 12;
 
 
 
@@ -112,6 +113,8 @@ public class CardGalleryController {
         for(Professional p:page)
         {
             VBox card=createCard(p);
+            GridPane.setFillHeight(card, true);
+            GridPane.setFillWidth(card, true);
             cardGrid.add(card,col,row);
             col++;
             if(col>=4){
@@ -143,7 +146,7 @@ public class CardGalleryController {
         book.getStyleClass().add("book-button");
         book.setOnAction(e -> {
             List<TimeSlot> availableSlots=professionalService.getAvailableTimeSlots(p.getId());
-            openBookingDialog(p, availableSlots);
+            DialogFactory.showBookingDialog(p,availableSlots,bookingService);
         });
 
         vbox.getChildren().addAll(nameText, specText, cityText, priceText, book);
@@ -158,66 +161,6 @@ public class CardGalleryController {
     @FXML
     private void onNextPage() {
         if ((currentPage+1)*pageSize < results.size()) { currentPage++; updateGrid(); }
-    }
-
-    private void openBookingDialog(Professional p, List<TimeSlot> availableSlots) {
-        Dialog<Void> dialog=new Dialog<>();
-        dialog.setTitle("Időpont foglalás:"+p.getName());
-
-        ComboBox<TimeSlot> slotBox=new ComboBox<>();
-        slotBox.getItems().addAll(availableSlots);
-        slotBox.setPromptText("Válassz időpontot");
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-        slotBox.setConverter(new StringConverter<TimeSlot>() {
-            @Override
-            public String toString(TimeSlot slot) {
-                return slot == null ? "" : slot.getStartTime().format(formatter);
-            }
-
-            @Override
-            public TimeSlot fromString(String string) {
-                return null;
-            }
-        });
-
-        TextField nameField=new TextField();
-        nameField.setPromptText("Név");
-
-        TextField emailField=new TextField();
-        emailField.setPromptText("E-mail");
-
-        TextField phoneField =new TextField();
-        phoneField.setPromptText("Telefonszám");
-
-        ButtonType bookButtonType = new ButtonType("Foglalás", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(bookButtonType, ButtonType.CANCEL);
-
-        VBox content = new VBox(10, slotBox, nameField, emailField, phoneField);
-        dialog.getDialogPane().setContent(content);
-
-        dialog.setResultConverter(dialogButton -> {
-            if (dialogButton == bookButtonType) {
-                TimeSlot selected = slotBox.getValue();
-                String name = nameField.getText();
-                String email = emailField.getText();
-                String phone = phoneField.getText();
-                if (selected != null && !name.isBlank() && !email.isBlank()) {
-                    try {
-                        bookingService.createBooking(selected.getId(), name, email, phone);
-
-                        Alert success = new Alert(Alert.AlertType.INFORMATION, "Sikeres foglalás!");
-                        success.showAndWait();
-                    } catch (Exception e) {
-                        Alert error = new Alert(Alert.AlertType.ERROR, "Hiba: " + e.getMessage());
-                        error.showAndWait();
-                    }
-                }
-            }
-            return null;
-        });
-
-        dialog.showAndWait();
     }
 
     private void setupAutoComplete(TextField field, Function<String, List<String>> suggester) {

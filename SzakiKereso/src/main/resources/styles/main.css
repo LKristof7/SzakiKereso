@@ -20,3 +20,16 @@
 .book-button:hover {
     -fx-background-color: #1565C0;
 }
+
+.reviewCard {
+    -fx-background-color: #ffffff;
+    -fx-padding: 10px;
+    -fx-border-radius: 5px;
+    -fx-border-color: #eeeeee;
+    -fx-border-width: 1px;
+}
+
+.rating-stars{
+    -fx-font-size: 16px;
+    -fx-text-fill: #ffb700;
+}
