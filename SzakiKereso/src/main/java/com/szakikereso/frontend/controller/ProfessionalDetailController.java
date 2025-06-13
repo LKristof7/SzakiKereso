@@ -80,7 +80,7 @@ public class ProfessionalDetailController {
         }
         List<TimeSlot> availableSlots=professionalService.getAvailableTimeSlots(currentProfessional.getId());
 
-        DialogFactory.showBookingDialog(currentProfessional,availableSlots,bookingService);
+        DialogFactory.showBookingDialog(currentProfessional,availableSlots,bookingService, ()->displayProfessional(currentProfessional));
         displayProfessional(currentProfessional);
     }
 

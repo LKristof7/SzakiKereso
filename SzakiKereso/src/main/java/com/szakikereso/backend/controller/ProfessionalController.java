@@ -7,6 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -29,11 +30,11 @@ public class ProfessionalController {
             @RequestParam(required = false) String city,
             @RequestParam(required = false) String specialty,
             @RequestParam(required = false)
-            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)
-            LocalDateTime slot,
+            @DateTimeFormat(iso = DateTimeFormat.ISO.DATE)
+            LocalDate date,
             @RequestParam(defaultValue = "false") boolean urgent
     ) {
-        return professionalService.search(name, city, specialty, slot, urgent);
+        return professionalService.search(name, city, specialty, date, urgent);
     }
 
     @PostMapping

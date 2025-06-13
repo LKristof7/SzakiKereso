@@ -14,7 +14,9 @@
 
     <MenuBar fx:id="menuBar" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
         <Menu text="Nézet">
+            <MenuItem text="Főmenü" onAction="#onShowWelcomePage"/>
             <MenuItem text="Szakemberek" onAction="#showGallery"/>
+            <MenuItem text="Foglalások" onAction="#showGallery"/>
         </Menu>
     </MenuBar>
 

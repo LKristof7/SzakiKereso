@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<VBox alignment="CENTER" styleClass="welcome-pane" spacing="20.0"
+      xmlns="http://javafx.com/javafx/17.0.2-ea"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.szakikereso.frontend.controller.WelcomeController">
+    <padding>
+        <Insets bottom="50.0" left="50.0" right="50.0" top="50.0" />
+    </padding>
+    <children>
+        <Label styleClass="welcome-title" text="Találja meg a tökéletes szakembert." textAlignment="CENTER" />
+        <Label styleClass="welcome-subtitle" text="Mesteremberek. Egy helyen. Azonnal." textAlignment="CENTER" />
+        <Button fx:id="browseButton" mnemonicParsing="false" onAction="#onBrowse" styleClass="browse-button-large" text="Szakemberek Böngészése" />
+    </children>
+</VBox>

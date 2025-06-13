@@ -1,6 +1,6 @@
 package com.szakikereso.frontend;
 
-import com.szakikereso.SpringContext;
+import com.szakikereso.SpringContext_CanBeDeletet;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,14 +18,20 @@ public class JavaFXApplication extends Application {
     public void init() throws Exception {
         super.init();
         springContext = SpringApplication.run(SzakiKeresoApplication.class);
-        SpringContext.setContext(springContext);
+       // SpringContext_CanBeDeletet.setContext(springContext);
     }
 
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/fxml/main.fxml"));
+        loader.setControllerFactory(clazz -> springContext.getBean(clazz));
+
         Parent root = loader.load();
-        stage.setScene(new Scene(root));
+
+        Scene scene = new Scene(root);
+        scene.getStylesheets().add(getClass().getResource("/styles/main.css").toExternalForm());
+
+        stage.setScene(scene);
         stage.setTitle("Szakember-kereső");
         stage.show();
     }

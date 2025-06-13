@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -25,10 +26,17 @@ public class ProfessionalService {
             String name,
             String city,
             String specialty,
-            LocalDateTime slot,
+            LocalDate date,
             boolean urgent
     )  {
-        return professionalRepository.advancedSearch(name, city, specialty, slot, urgent);
+        LocalDateTime startOfDay=null;
+        LocalDateTime endOfDay=null;
+        if(date!=null) {
+            startOfDay=date.atStartOfDay();
+            endOfDay=date.plusDays(1).atStartOfDay();
+        }
+
+        return professionalRepository.advancedSearch(name, city, specialty, startOfDay,endOfDay, urgent);
     }
 
     public Professional save(Professional p) {
