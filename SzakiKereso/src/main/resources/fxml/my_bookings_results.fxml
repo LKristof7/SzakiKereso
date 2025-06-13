@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.scene.text.Font?>
+<VBox alignment="TOP_CENTER" maxWidth="800.0" spacing="15.0"
+      style="-fx-background-color: #f4f4f4; -fx-padding: 40;"
+      xmlns="http://javafx.com/javafx/17.0.2-ea"
+      xmlns:fx="http://javafx.com/fxml/1"
+      fx:controller="com.szakikereso.frontend.controller.MyBookingsResultsController">
+    <children>
+        <Label text="Az Ön Foglalásai">
+            <font>
+                <Font name="System Bold" size="24.0" />
+            </font>
+        </Label>
+        <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
+            <content>
+                <VBox fx:id="bookingsContainer" spacing="10.0" />
+            </content>
+        </ScrollPane>
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBack" text="Vissza a kereséshez" />
+    </children>
+</VBox>

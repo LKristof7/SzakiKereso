@@ -125,7 +125,7 @@ public class CardGalleryController {
 
     private VBox createCard(Professional p){
         VBox vbox=new VBox(5);
-        vbox.getStyleClass().add("card");
+        vbox.getStyleClass().add("cardProf");
 
         vbox.setPrefHeight(150);
         vbox.setMinHeight(150);

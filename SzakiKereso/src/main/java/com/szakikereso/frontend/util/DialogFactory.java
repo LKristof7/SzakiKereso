@@ -3,6 +3,7 @@ package com.szakikereso.frontend.util;
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
+import com.szakikereso.backend.service.ReviewService;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
 import javafx.scene.layout.VBox;
@@ -16,7 +17,7 @@ public class DialogFactory {
 
     public static void showBookingDialog(Professional professional, List<TimeSlot> availableSlots, BookingService bookingService, Runnable onBookingSuccessAction) {
         if (availableSlots == null || availableSlots.isEmpty()) {
-            new Alert(Alert.AlertType.INFORMATION, "A szakembernek jelenleg nincs szabad időpontja.").showAndWait();
+            showAlert(Alert.AlertType.INFORMATION, "A szakembernek jelenleg nincs szabad időpontja!");
             return;
         }
 
@@ -110,5 +111,48 @@ public class DialogFactory {
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
+    }
+
+    public static void showReviewDialog(Professional professional, ReviewService reviewService) {
+        Dialog<Void> dialog=new Dialog<>();
+        dialog.setTitle("Vélemény írása: " + professional.getName());
+        dialog.setHeaderText("Kérjük értékelje a szakembert!");
+
+        Slider ratingSlider = new Slider(1,5,3);
+        ratingSlider.setShowTickLabels(true);
+        ratingSlider.setShowTickMarks(true);
+        ratingSlider.setMajorTickUnit(1);
+        ratingSlider.setMinorTickCount(0);
+        ratingSlider.setSnapToTicks(true);
+
+        TextArea reviewArea = new TextArea();
+        reviewArea.setEditable(true);
+        reviewArea.setPromptText("Írja le a véleményét.....");
+
+        ButtonType saveButtonType = new ButtonType("Mentés", ButtonBar.ButtonData.OK_DONE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+
+        VBox content=new VBox(20,ratingSlider, reviewArea);
+        dialog.getDialogPane().setContent(content);
+
+        dialog.setResultConverter(dialogButton ->{
+            if(dialogButton == saveButtonType){
+                int rating=(int)ratingSlider.getValue();
+                String review=reviewArea.getText();
+
+                if(review.isBlank()){
+                    showAlert(Alert.AlertType.WARNING, "Kérjük írjon szöveges véleményt!");
+                    return null;
+                }
+                try{
+                    reviewService.addReview(professional.getId(), rating, review);
+                    showAlert(Alert.AlertType.INFORMATION, "Köszönjük a véleményét!");
+                }catch (Exception e){
+                    showAlert(Alert.AlertType.ERROR, "Hiba a mentés során: " + e.getMessage());
+                }
+            }
+            return null;
+        });
+        dialog.showAndWait();
     }
 }
