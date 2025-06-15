@@ -13,14 +13,14 @@
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.szakikereso.frontend.controller.MyBookingsController">
     <children>
-        <Label text="Foglalásaim megtekintése">
+        <Label text="Foglalásaim megtekintése" styleClass="lookup-title">
             <font>
                 <Font name="System Bold" size="24.0" />
             </font>
         </Label>
-        <Label text="Kérjük, adja meg a foglaláskor használt nevét és az e-mail címét vagy telefonszámát a foglalásai megkereséséhez." wrapText="true" />
+        <Label styleClass="lookup-subtitle" text="Kérjük, adja meg a foglaláskor használt nevét és az e-mail címét vagy telefonszámát a foglalásai megkereséséhez." wrapText="true" />
         <TextField fx:id="nameField" promptText="Név" />
         <TextField fx:id="contactField" promptText="E-mail cím vagy telefonszám" />
-        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearchBookings" text="Keresés" />
+        <Button fx:id="searchButton" mnemonicParsing="false" onAction="#onSearchBookings" text="Keresés" styleClass="book-button" />
     </children>
 </VBox>

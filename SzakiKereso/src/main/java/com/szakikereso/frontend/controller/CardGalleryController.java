@@ -9,12 +9,11 @@ import com.szakikereso.frontend.util.DialogFactory;
 import jakarta.annotation.PostConstruct;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.*;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -77,6 +76,13 @@ public class CardGalleryController {
             Parent detailsNode = loader.load();
             this.detailController = loader.getController();
             detailViewPane.getChildren().setAll(detailsNode);
+
+            //kitölti a rendelkezésre álló helyet
+            AnchorPane.setTopAnchor(detailsNode, 0.0);
+            AnchorPane.setBottomAnchor(detailsNode, 0.0);
+            AnchorPane.setLeftAnchor(detailsNode, 0.0);
+            AnchorPane.setRightAnchor(detailsNode, 0.0);
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -127,10 +133,10 @@ public class CardGalleryController {
         VBox vbox=new VBox(5);
         vbox.getStyleClass().add("cardProf");
 
-        vbox.setPrefHeight(150);
-        vbox.setMinHeight(150);
-        vbox.setPrefWidth(160);
-        vbox.setMaxWidth(160);
+        vbox.setPrefHeight(165);
+        vbox.setMinHeight(165);
+        vbox.setPrefWidth(155);
+        vbox.setMaxWidth(155);
 
         vbox.setOnMouseClicked(mouseEvent -> {
             if(detailController!=null){
@@ -141,12 +147,16 @@ public class CardGalleryController {
 
         Text nameText = new Text(p.getName());
         nameText.setWrappingWidth(140);
+        VBox nameContainer = new VBox(nameText);
+        nameContainer.getStyleClass().add("card-name-container");
+
         Text specText = new Text(p.getSpecialty());
+        specText.setWrappingWidth(140);
         Text cityText = new Text(p.getCity());
         Text priceText = new Text(p.getPricePerHour() + " Ft/óra");
 
-
-
+        Region spacer = new Region();
+        VBox.setVgrow(spacer, Priority.ALWAYS);
         Button book = new Button("Foglalás");
         book.getStyleClass().add("book-button");
         book.setOnAction(e -> {
@@ -154,7 +164,7 @@ public class CardGalleryController {
             DialogFactory.showBookingDialog(p,availableSlots,bookingService, ()->performSearch());
         });
 
-        vbox.getChildren().addAll(nameText, specText, cityText, priceText, book);
+        vbox.getChildren().addAll(nameContainer, specText, cityText, priceText, book);
         return vbox;
     }
 

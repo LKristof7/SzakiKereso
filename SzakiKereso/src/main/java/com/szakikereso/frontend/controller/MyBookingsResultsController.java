@@ -50,6 +50,7 @@ public class MyBookingsResultsController {
             Label timeLabel = new Label("Időpont: " + book.getStartTime().format(formatter));
 
             Button reviewButton = new Button("Vélemény írása");
+            reviewButton.getStyleClass().add("book-button");
             reviewButton.setOnAction(event -> {
                 DialogFactory.showReviewDialog(book.getProfessional(),reviewService);
 

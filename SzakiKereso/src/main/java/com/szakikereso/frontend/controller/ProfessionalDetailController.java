@@ -26,8 +26,10 @@ public class ProfessionalDetailController {
     @FXML private Label cityLabel;
     @FXML private Label phoneLabel;
     @FXML private Label priceLabel;
-    @FXML private Button bookingButton;
+    @FXML private Label emailLabel;
+  //  @FXML private Button bookingButton;
     @FXML private VBox reviewsContainer;
+
 
     private final ProfessionalService professionalService;
     private final BookingService bookingService;
@@ -49,6 +51,7 @@ public class ProfessionalDetailController {
         cityLabel.setText(professional.getCity());
         phoneLabel.setText(professional.getPhone());
         priceLabel.setText(professional.getPricePerHour()+" Ft/óra");
+        emailLabel.setText(professional.getEmail());
 
         reviewsContainer.getChildren().clear();
         if(professional.getReviews() == null || professional.getReviews().isEmpty()) {
@@ -57,12 +60,13 @@ public class ProfessionalDetailController {
         else {
             for (Review review : professional.getReviews()) {
                 VBox reviewCard= new VBox(5);
-                reviewCard.getStyleClass().add("reviewCard");
+                reviewCard.getStyleClass().add("review-card");
 
                 int rating = review.getRating();
                 String stars = "★".repeat(rating) + "☆".repeat(5 - rating);
                 Label ratingLabel = new Label(stars);
                 ratingLabel.getStyleClass().add("rating-stars");
+                ratingLabel.setStyle("-fx-text-fill: #f1c40f;");
 
                 Text commentText= new Text(review.getComment());
                 commentText.setWrappingWidth(300);

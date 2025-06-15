@@ -6,6 +6,7 @@ import com.szakikereso.backend.service.BookingService;
 import com.szakikereso.backend.service.ReviewService;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.util.StringConverter;
 
@@ -22,6 +23,9 @@ public class DialogFactory {
         }
 
         Dialog<Void> dialog = new Dialog<>();
+        dialog.getDialogPane().getStyleClass().add("booking-dialog");
+        dialog.getDialogPane().setPrefSize(400,300);
+
         dialog.setTitle("Időpont foglalás: " + professional.getName());
 
         ComboBox<TimeSlot> slotBox = new ComboBox<>();
@@ -45,15 +49,20 @@ public class DialogFactory {
         TextField phoneField = new TextField();
         phoneField.setPromptText("Telefonszám");
 
-        ButtonType bookButtonType = new ButtonType("Foglalás", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(bookButtonType, ButtonType.CANCEL);
+        ButtonType saveButtonType = new ButtonType("Mentés", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancelButtonType= new ButtonType("Mégse", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
+
+        final Button okButton = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
+        final Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
+        okButton.getStyleClass().add("dialog-ok-button");
+        cancelBtn.getStyleClass().add("dialog-cancel-button");
 
         VBox content = new VBox(10, slotBox, nameField, emailField, phoneField);
         dialog.getDialogPane().setContent(content);
 
-        final Button bookBtn=(Button)dialog.getDialogPane().lookupButton(bookButtonType);
-
-        bookBtn.addEventFilter(ActionEvent.ACTION, event -> {
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
             event.consume();
 
             TimeSlot selected = slotBox.getValue();
@@ -124,34 +133,50 @@ public class DialogFactory {
         ratingSlider.setMajorTickUnit(1);
         ratingSlider.setMinorTickCount(0);
         ratingSlider.setSnapToTicks(true);
+        ratingSlider.getStyleClass().add("rating-slider");
+
+        ratingSlider.setOnMouseClicked((MouseEvent event) -> {
+            double clickPosition = event.getX() / ratingSlider.getWidth();
+            double range = ratingSlider.getMax() - ratingSlider.getMin();
+            double calculatedValue = ratingSlider.getMin() + (clickPosition * range);
+            long roundedValue = Math.round(calculatedValue);
+            ratingSlider.setValue(roundedValue);
+        });
 
         TextArea reviewArea = new TextArea();
         reviewArea.setEditable(true);
         reviewArea.setPromptText("Írja le a véleményét.....");
 
         ButtonType saveButtonType = new ButtonType("Mentés", ButtonBar.ButtonData.OK_DONE);
-        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, ButtonType.CANCEL);
+        ButtonType cancelButtonType= new ButtonType("Mégse", ButtonBar.ButtonData.CANCEL_CLOSE);
+
+        dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
+
+        final Button okButton = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
+        final Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
+        okButton.getStyleClass().add("dialog-ok-button");
+        cancelBtn.getStyleClass().add("dialog-cancel-button");
 
         VBox content=new VBox(20,ratingSlider, reviewArea);
         dialog.getDialogPane().setContent(content);
 
-        dialog.setResultConverter(dialogButton ->{
-            if(dialogButton == saveButtonType){
-                int rating=(int)ratingSlider.getValue();
-                String review=reviewArea.getText();
+        okButton.addEventFilter(ActionEvent.ACTION, event -> {
+            event.consume();
 
-                if(review.isBlank()){
-                    showAlert(Alert.AlertType.WARNING, "Kérjük írjon szöveges véleményt!");
-                    return null;
-                }
-                try{
-                    reviewService.addReview(professional.getId(), rating, review);
-                    showAlert(Alert.AlertType.INFORMATION, "Köszönjük a véleményét!");
-                }catch (Exception e){
-                    showAlert(Alert.AlertType.ERROR, "Hiba a mentés során: " + e.getMessage());
-                }
+            int rating=(int)ratingSlider.getValue();
+            String review=reviewArea.getText();
+
+            if(review.isBlank()){
+                showAlert(Alert.AlertType.WARNING, "Kérjük írjon szöveges véleményt!");
+                return;
             }
-            return null;
+
+            try{
+                reviewService.addReview(professional.getId(), rating, review);
+                showAlert(Alert.AlertType.INFORMATION, "Köszönjük a véleményét!");
+            }catch (Exception e){
+                showAlert(Alert.AlertType.ERROR, "Hiba a mentés során: " + e.getMessage());
+            }
         });
         dialog.showAndWait();
     }

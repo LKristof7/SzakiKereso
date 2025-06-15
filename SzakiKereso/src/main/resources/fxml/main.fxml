@@ -1,31 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
+<?import javafx.geometry.Insets?>
+<BorderPane xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
             fx:controller="com.szakikereso.frontend.controller.MainPageController"
-            prefHeight="800.0" prefWidth="1280.0" >
+            prefHeight="820.0" prefWidth="1420.0" >
 
 
-    <MenuBar fx:id="menuBar" AnchorPane.topAnchor="0" AnchorPane.leftAnchor="0" AnchorPane.rightAnchor="0">
-        <Menu text="Nézet">
-            <MenuItem text="Főmenü" onAction="#onShowWelcomePage"/>
-            <MenuItem text="Szakemberek" onAction="#showGallery"/>
-            <MenuItem text="Foglalások" onAction="#onShowMyBookings"/>
-        </Menu>
-    </MenuBar>
+    <left>
+        <VBox alignment="TOP_CENTER" prefWidth="200.0" spacing="10.0" styleClass="side-menu">
+            <padding>
+                <Insets top="20.0" />
+            </padding>
+            <children>
+                <Label styleClass="app-title" text="SzakiKereső" />
+                <Button maxWidth="1.7976931348623157E308" onAction="#onShowWelcomePage" text="Főmenü" />
+                <Button maxWidth="1.7976931348623157E308" onAction="#showGallery" text="Szakemberek" />
+                <Button maxWidth="1.7976931348623157E308" onAction="#onShowMyBookings" text="Foglalásaim" />
+            </children>
+        </VBox>
+    </left>
 
+    <center>
+        <StackPane fx:id="mainContent" BorderPane.alignment="CENTER" />
+    </center>
 
-    <StackPane fx:id="mainContent"
-          AnchorPane.topAnchor="25.0"
-    AnchorPane.bottomAnchor="0.0"
-    AnchorPane.leftAnchor="0.0"
-    AnchorPane.rightAnchor="0.0">
-    </StackPane>
-
-</AnchorPane>
+</BorderPane>

@@ -6,6 +6,7 @@ import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.repository.BookingRepository;
 import com.szakikereso.backend.repository.ProfessionalRepository;
 import com.szakikereso.backend.repository.TimeSlotRepository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
@@ -13,10 +14,7 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 @Component
 public class DataSeeder implements CommandLineRunner {
@@ -33,49 +31,73 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     @Override
+    @Transactional
     public void run(String... args) throws Exception {
-        if(timeSlotRepository.count() > 0) {
-            System.out.println("Időpontok már léteznek az adatbázisban, a DataSeeder nem fut le");
-            return;
-        }
-
-        System.out.println("DataSeeder futtatása: Időpontok generálása");
+        System.out.println("Régi időpontok törlése és újak betöltése -DataSeeder futtatása-");
 
         List<Professional> professionals = professionalRepository.findAll();
-        if(professionals.isEmpty()) {
-            System.out.println("Nincsenek szakemberek a listában, a DataSeeder nem fut le");
-            return;
+
+        LocalDateTime cutoffDate=LocalDate.now().minusDays(1).atStartOfDay();
+        timeSlotRepository.deleteOldSlots(cutoffDate);
+
+        Optional<LocalDateTime> latestSlot=timeSlotRepository.findLatestTimeSlot();
+
+        LocalDate today=LocalDate.now();
+        LocalDate generationStartDate;
+
+        if (latestSlot.isPresent()) {
+            // Ha már vannak időpontok, a generálást a legutolsó nap utáni naptól kezdjük.
+            LocalDate lastGeneratedDay = latestSlot.get().toLocalDate();
+            generationStartDate = lastGeneratedDay.plusDays(1);
+        } else {
+            // Ha a tábla üres, a mai naptól kezdünk.
+            generationStartDate = today;
         }
 
-        List<TimeSlot> allGeneratedSlots = new ArrayList<>();
-        //H-SZO 7-18 alapján generálunk
-        int startHour=7;
-        int endHour=18;
+        // Biztosítjuk, hogy soha ne generáljunk a múltba. Ha valamiért lemaradnánk,
+        // a generálás akkor is a mai naptól induljon.
+        if (generationStartDate.isBefore(today)) {
+            generationStartDate = today;
+        }
 
-        for (Professional professional : professionals) {
-            //Generálunk a következő 14 napra
-            for (int i=0;i<14;i++){
-                LocalDate currentDate = LocalDate.now().plusDays(i);
-                DayOfWeek dayOfWeek = currentDate.getDayOfWeek();
-                if(dayOfWeek!=DayOfWeek.SUNDAY){
-                    for (int hour=startHour;hour<endHour;hour++){
-                        TimeSlot newtimeSlot = new TimeSlot();
-                        newtimeSlot.setProfessional(professional);
-                        newtimeSlot.setStartTime(LocalDateTime.of(currentDate, LocalTime.of(hour, 0)));
-                        newtimeSlot.setEndTime(LocalDateTime.of(currentDate, LocalTime.of(hour + 1, 0)));
-                        newtimeSlot.setBooked(false);
-                        allGeneratedSlots.add(newtimeSlot);
+        LocalDate generationEndDate = today.plusDays(14); // Mindig 14 napra előre töltünk
 
+        // 3. LÉPÉS: Új időpontok generálása, ha szükséges
+        if (!generationStartDate.isAfter(generationEndDate)) {
+            System.out.println("Új időpontok generálása " + generationStartDate + " és " + generationEndDate + " között.");
+
+            if (professionals.isEmpty()) {
+                System.out.println("Nincsenek szakemberek, nincs mihez időpontot generálni.");
+                return;
+            }
+
+            List<TimeSlot> newSlots = new ArrayList<>();
+            // A generálás logikája ugyanaz, mint eddig
+            int startHour = 7;
+            int endHour = 15;
+
+            for (LocalDate date = generationStartDate; !date.isAfter(generationEndDate); date = date.plusDays(1)) {
+                DayOfWeek dayOfWeek = date.getDayOfWeek();
+                if (dayOfWeek != DayOfWeek.SUNDAY) { // Vasárnap nem dolgozunk
+                    for (Professional professional : professionals) {
+                        for (int hour = startHour; hour < endHour; hour++) {
+                            TimeSlot newSlot = new TimeSlot();
+                            newSlot.setProfessional(professional);
+                            newSlot.setStartTime(LocalDateTime.of(date, LocalTime.of(hour, 0)));
+                            newSlot.setEndTime(LocalDateTime.of(date, LocalTime.of(hour + 1, 0)));
+                            newSlot.setBooked(false);
+                            newSlots.add(newSlot);
+                        }
                     }
                 }
             }
+            timeSlotRepository.saveAll(newSlots);
+            System.out.println(newSlots.size() + " darab új időpont generálva.");
+            makeItRealistic(newSlots);
+        } else {
+            System.out.println("Nincs szükség új időpontok generálására, a rendszer naprakész.");
         }
 
-        timeSlotRepository.saveAll(allGeneratedSlots);
-        System.out.println(allGeneratedSlots.size()+" darab szabad időpont sikeresen generálva és mentve");
-
-        //Random néha időpont "foglalt" lesz
-        makeItRealistic(allGeneratedSlots);
     }
 
     private void makeItRealistic(List<TimeSlot> allGeneratedSlots) {

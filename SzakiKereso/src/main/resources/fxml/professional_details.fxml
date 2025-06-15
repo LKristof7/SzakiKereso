@@ -10,7 +10,7 @@
 <?import javafx.scene.text.Font?>
 <VBox fx:id="detailsRootPane"
       spacing="10.0"
-      style="-fx-background-color: #f4f4f4;"
+      styleClass="details-pane"
       xmlns="http://javafx.com/javafx/17.0.2-ea"
       xmlns:fx="http://javafx.com/fxml/1"
       fx:controller="com.szakikereso.frontend.controller.ProfessionalDetailController"
@@ -19,16 +19,12 @@
         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
     </padding>
     <children>
-        <Label fx:id="nameLabel" text="Szakember Neve" wrapText="true">
-            <font>
-                <Font name="System Bold" size="24.0" />
-            </font>
-        </Label>
+        <Label fx:id="nameLabel" styleClass="details-title" text="Szakember Neve" wrapText="true" minHeight="80.0" prefHeight="80.0"/>
         <Separator prefWidth="200.0" />
         <GridPane hgap="10.0">
             <columnConstraints>
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" prefWidth="100.0" />
-                <ColumnConstraints hgrow="SOMETIMES" minWidth="10.0" />
+                <ColumnConstraints halignment="LEFT" hgrow="NEVER" prefWidth="110.0" />
+                <ColumnConstraints halignment="LEFT" hgrow="ALWAYS" />
             </columnConstraints>
             <rowConstraints>
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -37,23 +33,25 @@
                 <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
             </rowConstraints>
             <children>
-                <Label text="Szakterület:" />
+                <Label text="Szakterület:" styleClass="details-property-label" />
                 <Label fx:id="specialtyLabel" text="-" GridPane.columnIndex="1" />
-                <Label text="Város:" GridPane.rowIndex="1" />
+
+                <Label text="Város:" GridPane.rowIndex="1" styleClass="details-property-label" />
                 <Label fx:id="cityLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+
                 <Label text="Telefon:" GridPane.rowIndex="2" />
                 <Label fx:id="phoneLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="2" />
+
                 <Label text="Ár:" GridPane.rowIndex="3" />
                 <Label fx:id="priceLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="3" />
+
+                <Label text="E-mail:" GridPane.rowIndex="4" />
+                <Label fx:id="emailLabel" text="-" GridPane.columnIndex="1" GridPane.rowIndex="4" />
             </children>
         </GridPane>
-        <Button fx:id="bookingButton" mnemonicParsing="false" onAction="#onBook" text="Időpontfoglalás" />
+        <Button fx:id="bookingButton" styleClass="book-button" mnemonicParsing="false" onAction="#onBook" text="Időpontfoglalás" />
         <Separator prefWidth="200.0" />
-        <Label text="Vélemények">
-            <font>
-                <Font name="System Bold" size="18.0" />
-            </font>
-        </Label>
+        <Label text="Vélemények"/>
         <ScrollPane fitToWidth="true" VBox.vgrow="ALWAYS">
             <content>
                 <VBox fx:id="reviewsContainer" spacing="10.0" />
