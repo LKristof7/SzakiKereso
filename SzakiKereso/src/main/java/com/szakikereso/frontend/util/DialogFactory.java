@@ -13,6 +13,7 @@ import javafx.util.StringConverter;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 public class DialogFactory {
 
@@ -23,6 +24,7 @@ public class DialogFactory {
         }
 
         Dialog<Void> dialog = new Dialog<>();
+        applyStylesToDialog(dialog);
         dialog.getDialogPane().getStyleClass().add("booking-dialog");
         dialog.getDialogPane().setPrefSize(400,300);
 
@@ -55,9 +57,6 @@ public class DialogFactory {
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
 
         final Button okButton = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
-        final Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
-        okButton.getStyleClass().add("dialog-ok-button");
-        cancelBtn.getStyleClass().add("dialog-cancel-button");
 
         VBox content = new VBox(10, slotBox, nameField, emailField, phoneField);
         dialog.getDialogPane().setContent(content);
@@ -99,6 +98,7 @@ public class DialogFactory {
         dialog.showAndWait();
     }
 
+
     private static boolean isValidEmail(String email){
         if(email ==null || email.isBlank()){
             return false;
@@ -117,6 +117,7 @@ public class DialogFactory {
 
     private static void showAlert(Alert.AlertType alertType, String message) {
         Alert alert = new Alert(alertType);
+        applyStylesToDialog(alert);
         alert.setHeaderText(null);
         alert.setContentText(message);
         alert.showAndWait();
@@ -124,6 +125,8 @@ public class DialogFactory {
 
     public static void showReviewDialog(Professional professional, ReviewService reviewService) {
         Dialog<Void> dialog=new Dialog<>();
+        applyStylesToDialog(dialog);
+        dialog.getDialogPane().getStyleClass().add("review-dialog");
         dialog.setTitle("Vélemény írása: " + professional.getName());
         dialog.setHeaderText("Kérjük értékelje a szakembert!");
 
@@ -133,7 +136,6 @@ public class DialogFactory {
         ratingSlider.setMajorTickUnit(1);
         ratingSlider.setMinorTickCount(0);
         ratingSlider.setSnapToTicks(true);
-        ratingSlider.getStyleClass().add("rating-slider");
 
         ratingSlider.setOnMouseClicked((MouseEvent event) -> {
             double clickPosition = event.getX() / ratingSlider.getWidth();
@@ -153,9 +155,6 @@ public class DialogFactory {
         dialog.getDialogPane().getButtonTypes().addAll(saveButtonType, cancelButtonType);
 
         final Button okButton = (Button) dialog.getDialogPane().lookupButton(saveButtonType);
-        final Button cancelBtn = (Button) dialog.getDialogPane().lookupButton(cancelButtonType);
-        okButton.getStyleClass().add("dialog-ok-button");
-        cancelBtn.getStyleClass().add("dialog-cancel-button");
 
         VBox content=new VBox(20,ratingSlider, reviewArea);
         dialog.getDialogPane().setContent(content);
@@ -174,10 +173,17 @@ public class DialogFactory {
             try{
                 reviewService.addReview(professional.getId(), rating, review);
                 showAlert(Alert.AlertType.INFORMATION, "Köszönjük a véleményét!");
+                dialog.close();
             }catch (Exception e){
                 showAlert(Alert.AlertType.ERROR, "Hiba a mentés során: " + e.getMessage());
             }
         });
         dialog.showAndWait();
     }
+
+    private static void applyStylesToDialog(Dialog<?> dialog) {
+        DialogPane dialogPane=dialog.getDialogPane();
+        dialogPane.getStylesheets().add(Objects.requireNonNull(DialogFactory.class.getResource("/styles/main.css")).toExternalForm());
+    }
 }
+

@@ -23,6 +23,6 @@
                 <VBox fx:id="bookingsContainer" spacing="10.0" />
             </content>
         </ScrollPane>
-        <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBack" text="Vissza a kereséshez" />
+        <Button fx:id="backButton" mnemonicParsing="false" onAction="#onBack" text="Vissza a kereséshez" styleClass="book-button" />
     </children>
 </VBox>

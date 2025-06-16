@@ -24,7 +24,7 @@
                                 <TextField fx:id="specialtyField" promptText="Szakterület..." />
                                 <DatePicker fx:id="datePicker" />
                                 <CheckBox fx:id="urgentBox" text="Sürgős" />
-                                <Button onAction="#onSearch" text="Keresés" />
+                                <Button onAction="#onSearch" text="Keresés" styleClass="book-button" />
                             </children>
                         </HBox>
 
@@ -46,9 +46,9 @@
 
                         <HBox alignment="CENTER" spacing="10.0">
                             <children>
-                                <Button onAction="#onPrevPage" text="&lt;&lt; Prev" />
+                                <Button onAction="#onPrevPage" text="&lt;&lt; Előző" styleClass="book-button" />
                                 <Label fx:id="pageLabel" text="1 / 1" />
-                                <Button onAction="#onNextPage" text="Next &gt;&gt;" />
+                                <Button onAction="#onNextPage" text="Következő &gt;&gt;" styleClass="book-button" />
                             </children>
                         </HBox>
                     </children>
