@@ -1,14 +1,14 @@
 package com.szakikereso.backend.controller;
-
+/*-------------------------------------------------*/
+/*----- ONLY FOR WEB --- CAN BE DELETED ----------*/
+/*-----------------------------------------------*/
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.service.ProfessionalService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.List;
 
 

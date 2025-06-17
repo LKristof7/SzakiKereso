@@ -6,9 +6,7 @@ import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
 import com.szakikereso.backend.service.ProfessionalService;
 import com.szakikereso.frontend.util.DialogFactory;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -27,7 +25,6 @@ public class ProfessionalDetailController {
     @FXML private Label phoneLabel;
     @FXML private Label priceLabel;
     @FXML private Label emailLabel;
-  //  @FXML private Button bookingButton;
     @FXML private VBox reviewsContainer;
 
 

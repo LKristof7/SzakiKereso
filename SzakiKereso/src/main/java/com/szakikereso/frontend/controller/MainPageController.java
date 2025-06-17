@@ -1,11 +1,8 @@
 package com.szakikereso.frontend.controller;
 
 import com.szakikereso.backend.model.Booking;
-import jakarta.annotation.PostConstruct;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.StackPane;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
@@ -16,7 +13,6 @@ import java.util.List;
 @Component
 public class MainPageController {
     private final MyBookingsResultsController myBookingsResultsController;
-    @FXML private AnchorPane rootPane;
     @FXML private StackPane mainContent;
 
     private final ApplicationContext applicationContext;

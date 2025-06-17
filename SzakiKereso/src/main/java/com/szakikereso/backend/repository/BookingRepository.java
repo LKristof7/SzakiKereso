@@ -10,10 +10,6 @@ import java.util.List;
 
 public interface BookingRepository extends JpaRepository<Booking, Long> {
 
-    List<Booking> findByProfessionalId(Long professionalId);
-
-    List<Booking> findByProfessionalIdAndStartTimeBetween(Long professionalId, LocalDateTime start, LocalDateTime end);
-
     @Query("SELECT b FROM Booking b WHERE " +
             "LOWER(b.clientName) = LOWER(:clientName) AND " +
             "(LOWER(b.clientEmail) = LOWER(:clientEmail) OR b.clientPhone = :clientPhone)")

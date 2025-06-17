@@ -9,18 +9,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public interface ProfessionalRepository extends JpaRepository<Professional, Long> {
-    // Név szerinti keresés (részszöveg)
-    List<Professional> findByNameContainingIgnoreCase(String name);
-
-    // Város szerint
-    List<Professional> findByCityIgnoreCase(String city);
-
-    // Szakterület (pontosan vagy részben)
-    List<Professional> findBySpecialtyContainingIgnoreCase(String specialty);
-
-    // Akár több feltétel kombinálva is lehet
-    List<Professional> findByCityIgnoreCaseAndSpecialtyContainingIgnoreCase(String city, String specialty);
-
 
     @Query("SELECT DISTINCT p.specialty FROM Professional p WHERE LOWER(p.specialty) LIKE CONCAT(:prefix, '%')")
     List<String> findDistinctSpecialtiesStartingWith(@Param("prefix")String prefix);

@@ -50,19 +50,18 @@ public class DataSeeder implements CommandLineRunner {
             LocalDate lastGeneratedDay = latestSlot.get().toLocalDate();
             generationStartDate = lastGeneratedDay.plusDays(1);
         } else {
-            // Ha a tábla üres, a mai naptól kezdünk.
             generationStartDate = today;
         }
 
-        // Biztosítjuk, hogy soha ne generáljunk a múltba. Ha valamiért lemaradnánk,
-        // a generálás akkor is a mai naptól induljon.
+        // Biztosítjuk, hogy soha ne generáljunk a múltba.
+        // A generálás a mai naptól induljon.
         if (generationStartDate.isBefore(today)) {
             generationStartDate = today;
         }
 
-        LocalDate generationEndDate = today.plusDays(14); // Mindig 14 napra előre töltünk
+        LocalDate generationEndDate = today.plusDays(14);
 
-        // 3. LÉPÉS: Új időpontok generálása, ha szükséges
+        // Új időpontok generálása, ha szükséges
         if (!generationStartDate.isAfter(generationEndDate)) {
             System.out.println("Új időpontok generálása " + generationStartDate + " és " + generationEndDate + " között.");
 
@@ -72,13 +71,12 @@ public class DataSeeder implements CommandLineRunner {
             }
 
             List<TimeSlot> newSlots = new ArrayList<>();
-            // A generálás logikája ugyanaz, mint eddig
             int startHour = 7;
             int endHour = 15;
 
             for (LocalDate date = generationStartDate; !date.isAfter(generationEndDate); date = date.plusDays(1)) {
                 DayOfWeek dayOfWeek = date.getDayOfWeek();
-                if (dayOfWeek != DayOfWeek.SUNDAY) { // Vasárnap nem dolgozunk
+                if (dayOfWeek != DayOfWeek.SUNDAY) {
                     for (Professional professional : professionals) {
                         for (int hour = startHour; hour < endHour; hour++) {
                             TimeSlot newSlot = new TimeSlot();
@@ -128,7 +126,7 @@ public class DataSeeder implements CommandLineRunner {
             newBookings.add(booking);
         }
 
-        // A módosított (már foglalt) időpontok és az új foglalások mentése
+        // A módosított időpontok és az új foglalások mentése
         timeSlotRepository.saveAll(slotsToBook);
         bookingRepository.saveAll(newBookings);
 

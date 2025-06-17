@@ -1,15 +1,12 @@
 package com.szakikereso.frontend.controller;
 
-import com.szakikereso.SpringContext_CanBeDeletet;
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
 import com.szakikereso.backend.service.ProfessionalService;
 import com.szakikereso.frontend.util.DialogFactory;
-import jakarta.annotation.PostConstruct;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
-import javafx.geometry.Pos;
 import javafx.geometry.Side;
 import javafx.scene.Parent;
 import javafx.scene.control.*;

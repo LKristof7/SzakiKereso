@@ -3,20 +3,15 @@ package com.szakikereso.frontend.controller;
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
@@ -25,7 +20,6 @@ public class BookingDialogController {
     @FXML private TextField nameField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
-    @FXML private DatePicker datePicker;
     @FXML private ComboBox<TimeSlot> timeSlotBox;
 
     @Autowired

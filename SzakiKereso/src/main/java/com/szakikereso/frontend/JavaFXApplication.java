@@ -1,6 +1,5 @@
 package com.szakikereso.frontend;
 
-import com.szakikereso.SpringContext_CanBeDeletet;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -18,7 +17,6 @@ public class JavaFXApplication extends Application {
     public void init() throws Exception {
         super.init();
         springContext = SpringApplication.run(SzakiKeresoApplication.class);
-       // SpringContext_CanBeDeletet.setContext(springContext);
     }
 
     @Override

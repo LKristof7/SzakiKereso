@@ -14,8 +14,8 @@ public class Review {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private int rating;       // 0–5 csillag
-    private String comment;   // szöveges vélemény
+    private int rating;
+    private String comment;
 
     @ManyToOne
     @JoinColumn(name = "professional_id")

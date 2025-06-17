@@ -20,10 +20,11 @@ public class ReviewService {
         Professional prof = professionalRepository.findById(professionalId)
                 .orElseThrow(() -> new IllegalArgumentException("Nem található szakember ezzel az azonosítóval: " + professionalId));
 
-        Review newReview = new Review();
-        newReview.setProfessional(prof);
-        newReview.setRating(rating);
-        newReview.setComment(comment);
+        Review newReview = Review.builder()
+                .professional(prof)
+                .rating(rating)
+                .comment(comment)
+                .build();
 
         return reviewRepository.save(newReview);
     }

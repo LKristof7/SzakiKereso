@@ -3,8 +3,6 @@ package com.szakikereso.backend.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.sql.Time;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;

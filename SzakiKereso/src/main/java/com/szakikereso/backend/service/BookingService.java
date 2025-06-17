@@ -3,14 +3,11 @@ package com.szakikereso.backend.service;
 import com.szakikereso.backend.model.Booking;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.repository.BookingRepository;
-import com.szakikereso.backend.repository.ProfessionalRepository;
 import com.szakikereso.backend.repository.TimeSlotRepository;
 import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
