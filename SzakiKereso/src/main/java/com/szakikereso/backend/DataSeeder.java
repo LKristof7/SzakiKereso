@@ -6,6 +6,7 @@ import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.repository.BookingRepository;
 import com.szakikereso.backend.repository.ProfessionalRepository;
 import com.szakikereso.backend.repository.TimeSlotRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -17,18 +18,12 @@ import java.time.LocalTime;
 import java.util.*;
 
 @Component
+@RequiredArgsConstructor
 public class DataSeeder implements CommandLineRunner {
 
     private final ProfessionalRepository professionalRepository;
     private final TimeSlotRepository timeSlotRepository;
     private final BookingRepository bookingRepository;
-
-    public DataSeeder(ProfessionalRepository prepository, TimeSlotRepository ptimeSlotRepository, BookingRepository pbookingRepository) {
-        this.professionalRepository = prepository;
-        this.timeSlotRepository = ptimeSlotRepository;
-        this.bookingRepository = pbookingRepository;
-
-    }
 
     @Override
     @Transactional

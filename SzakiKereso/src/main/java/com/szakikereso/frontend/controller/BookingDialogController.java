@@ -1,5 +1,9 @@
 package com.szakikereso.frontend.controller;
 
+/*---------------------------------------------------------*/
+/*---- OUTDATED -------------------- CAN BE DELETED ------*/
+/*-------------------------------------------------------*/
+
 import com.szakikereso.backend.model.Professional;
 import com.szakikereso.backend.model.TimeSlot;
 import com.szakikereso.backend.service.BookingService;
